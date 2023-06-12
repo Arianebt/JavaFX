@@ -1,28 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.XYChart?>
 
-<VBox alignment="CENTER" prefHeight="309.0" prefWidth="280.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo19.HelloController">
-<padding>
-    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-</padding>
-   <Label text="Toppers of the class" textFill="#e82828">
-      <font>
-         <Font name="Calibri Bold" size="20.0" />
-      </font>
-   </Label>
-<TableView fx:id="covidTable">
-    <columns>
-        <TableColumn fx:id="IdPatientColumn" prefWidth="38.0" text="idPatient" />
-        <TableColumn fx:id="NameColumn" prefWidth="75.0" text="Name" />
-        <TableColumn fx:id="SexColumn" prefWidth="75.0" text="Sex" />
-        <TableColumn fx:id="ageColumn" prefWidth="50.0" text="Age" />
-        <TableColumn fx:id="BirthColumn" prefWidth="50.0" text="Birth_date" />
-        <TableColumn fx:id="ConditionColumnColumn" prefWidth="50.0" text="Add_condition" />
-    </columns>
-</TableView>
-<Button onAction="#onHelloButtonClick" text="Check Students" />
-</VBox>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo19.HelloController">
+    <top>
+        <Button mnemonicParsing="false" onAction="#onHelloButtonClick" text="Load Data" />
+    </top>
+    <center>
+        <TableView fx:id="covidTable" prefHeight="200.0" prefWidth="200.0">
+            <columns>
+                <TableColumn fx:id="IdPatientColumn" prefWidth="75.0" text="Patient ID" />
+                <TableColumn fx:id="NameColumn" prefWidth="75.0" text="Name" />
+                <TableColumn fx:id="SexColumn" prefWidth="75.0" text="Sex" />
+                <TableColumn fx:id="ageColumn" prefWidth="75.0" text="Age" />
+                <TableColumn fx:id="BirthColumn" prefWidth="75.0" text="Date of Birth" />
+                <TableColumn fx:id="ConditionColumn" prefWidth="75.0" text="Condition" />
+            </columns>
+        </TableView>
+    </center>
+    <bottom>
+        <BarChart fx:id="chart" animated="false">
+            <xAxis>
+                <CategoryAxis fx:id="xAxis" side="BOTTOM" />
+            </xAxis>
+            <yAxis>
+                <NumberAxis fx:id="yAxis" side="LEFT" />
+            </yAxis>
+        </BarChart>
+    </bottom>
+</BorderPane>

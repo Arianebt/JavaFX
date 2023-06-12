@@ -1,7 +1,14 @@
 package com.example.demo19;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.sql.Connection;
@@ -20,12 +27,17 @@ public class HelloController {
     private TableColumn<Patient, String> SexColumn;
     @FXML
     private TableColumn<Patient, Integer> ageColumn;
-
     @FXML
     private TableColumn<Patient, String> BirthColumn;
-
     @FXML
     private TableColumn<Patient, String> ConditionColumn;
+
+    @FXML
+    private BarChart<String, Integer> chart;
+    @FXML
+    private CategoryAxis xAxis;
+    @FXML
+    private NumberAxis yAxis;
 
     @FXML
     protected void initialize() {
@@ -36,6 +48,10 @@ public class HelloController {
         BirthColumn.setCellValueFactory(new PropertyValueFactory<>("Date_Of_Brith"));
         ConditionColumn.setCellValueFactory(new PropertyValueFactory<>("Add_condition"));
 
+        xAxis.setLabel("Month");
+        yAxis.setLabel("Positive Tests");
+
+        retrieveChartData();
     }
 
     @FXML
@@ -64,5 +80,32 @@ public class HelloController {
         } catch (Exception e) {
             System.out.println(e);
         }
+    }
+
+    private void retrieveChartData() {
+        ObservableList<XYChart.Data<String, Integer>> chartData = FXCollections.observableArrayList();
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/covid", "root", "Q8iqQ74q@10");
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT MONTH(test_date) AS month, COUNT(*) AS positive_tests " +
+                    "FROM test " +
+                    "WHERE YEAR(test_date) = 2022 AND test_result = 'positive' " +
+                    "GROUP BY MONTH(test_date)");
+
+            while (resultSet.next()) {
+                String month = resultSet.getString("month");
+                int positiveTests = resultSet.getInt("positive_tests");
+
+                chartData.add(new XYChart.Data<>(month, positiveTests));
+            }
+
+            connection.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        XYChart.Series<String, Integer> series = new XYChart.Series<>();
+        series.setData(chartData);
+        chart.getData().add(series);
     }
 }
