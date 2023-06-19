@@ -1,5 +1,5 @@
 package com.example.demo19;
-
+import java.sql.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -26,12 +26,9 @@ public class HelloController {
     @FXML
     private TableColumn<Patient, String> SexColumn;
     @FXML
-    private TableColumn<Patient, Integer> ageColumn;
-    @FXML
     private TableColumn<Patient, String> BirthColumn;
     @FXML
-    private TableColumn<Patient, String> ConditionColumn;
-
+    private TableColumn<Patient, String> ResultColumn;
     @FXML
     private BarChart<String, Integer> chart;
     @FXML
@@ -41,13 +38,11 @@ public class HelloController {
 
     @FXML
     protected void initialize() {
-        IdPatientColumn.setCellValueFactory(new PropertyValueFactory<>("idPatient"));
+        IdPatientColumn.setCellValueFactory(new PropertyValueFactory<>("IdPatient"));
         NameColumn.setCellValueFactory(new PropertyValueFactory<>("Name"));
         SexColumn.setCellValueFactory(new PropertyValueFactory<>("Sex"));
-        ageColumn.setCellValueFactory(new PropertyValueFactory<>("Age"));
-        BirthColumn.setCellValueFactory(new PropertyValueFactory<>("Date_Of_Brith"));
-        ConditionColumn.setCellValueFactory(new PropertyValueFactory<>("Add_condition"));
-
+        BirthColumn.setCellValueFactory(new PropertyValueFactory<>("dateOfBirth"));
+        ResultColumn.setCellValueFactory(new PropertyValueFactory<>("columnResult"));
         xAxis.setLabel("Month");
         yAxis.setLabel("Positive Tests");
 
@@ -62,17 +57,18 @@ public class HelloController {
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/covid", "root", "Q8iqQ74q@10");
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT idPatient, Name, Sex, Age, Date_of_Birth, Add_Condition FROM patient");
+            ResultSet resultSet = statement.executeQuery("SELECT p.idPatient, p.Name, p.Sex, p.Date_Of_Birth, t.test_result " +
+                    "FROM patient p " +
+                    "INNER JOIN test t ON p.idPatient = t.patient_id");
 
             while (resultSet.next()) {
                 int IdPatient = resultSet.getInt("idPatient");
                 String Name = resultSet.getString("Name");
                 String Sex = resultSet.getString("Sex");
-                int Age = resultSet.getInt("Age");
-                String BirthDate = resultSet.getString("Date_Of_Brith");
-                String Prev_Condition = resultSet.getString("Add_condition");
+                String BirthDate = resultSet.getString("Date_Of_Birth");
+                String result = resultSet.getString("test_result");
 
-                Patient Patient = new Patient(IdPatient, Name, Sex, Age, BirthDate, Prev_Condition);
+                Patient Patient = new Patient(IdPatient, Name, Sex, BirthDate, result);
                 covidTable.getItems().add(Patient);
             }
 

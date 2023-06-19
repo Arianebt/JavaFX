@@ -17,11 +17,10 @@
         <TableView fx:id="covidTable" prefHeight="200.0" prefWidth="200.0">
             <columns>
                 <TableColumn fx:id="IdPatientColumn" prefWidth="75.0" text="Patient ID" />
-                <TableColumn fx:id="NameColumn" prefWidth="75.0" text="Name" />
+                <TableColumn fx:id="NameColumn" prefWidth="100.0" text="Name" />
                 <TableColumn fx:id="SexColumn" prefWidth="75.0" text="Sex" />
-                <TableColumn fx:id="ageColumn" prefWidth="75.0" text="Age" />
                 <TableColumn fx:id="BirthColumn" prefWidth="75.0" text="Date of Birth" />
-                <TableColumn fx:id="ConditionColumn" prefWidth="75.0" text="Condition" />
+                <TableColumn fx:id="ResultColumn" prefWidth="75.0" text="Result" />
             </columns>
         </TableView>
     </center>
