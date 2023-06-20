@@ -3,6 +3,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
 <?import javafx.scene.layout.*?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo19.HelloController">
@@ -13,7 +14,7 @@
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                             <children>
-                                <BarChart fx:id="chart" animated="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <BarChart fx:id="chart" style="-fx-alternative-column-fill-visible: red; -fx-background-color: lightblue;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <xAxis>
                                         <CategoryAxis side="BOTTOM" fx:id="xAxis" />
                                     </xAxis>
@@ -23,6 +24,9 @@
                                     <padding>
                                         <Insets top="200.0" />
                                     </padding>
+                           <effect>
+                              <ColorAdjust brightness="-0.09" contrast="0.09" hue="-0.07" saturation="-0.02" />
+                           </effect>
                                 </BarChart>
 
                                 <GridPane layoutX="14.0" layoutY="14.0" prefHeight="90.0" prefWidth="369.0" AnchorPane.bottomAnchor="467.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="217.0" AnchorPane.topAnchor="14.0">
@@ -65,15 +69,14 @@
                             </children></AnchorPane>
                     </content>
                 </Tab>
-                <Tab fx:id="pieChartTab" text="Pie Chart">
+                <Tab fx:id="pieChartTab" onSelectionChanged="#handlePieChart" text="Pie Chart">
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <PieChart title="Positive Cases per Month" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
-                           <padding>
-                              <Insets top="100.0" />
-                           </padding>
-                        </PieChart>
+                        <PieChart fx:id="pieChart" clockwise="true" labelLineLength="50" labelsVisible="true" startAngle="180.0" title="Positive Cases per Month" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
+                           <effect>
+                              <ColorAdjust />
+                           </effect></PieChart>
                      </children></AnchorPane>
                     </content>
                 </Tab>

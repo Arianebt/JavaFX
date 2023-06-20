@@ -4,15 +4,16 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 
 public class HelloController {
     @FXML
@@ -40,9 +41,10 @@ public class HelloController {
     @FXML
     private NumberAxis yAxis;
     @FXML
-    private Tab pieChartTab;
+    private PieChart pieChart;
     @FXML
     private ObservableList<XYChart.Data<String, Integer>> chartData = FXCollections.observableArrayList();
+    private Node piechart;
 
 
     @FXML
@@ -69,14 +71,7 @@ public class HelloController {
         sexRadioButton.setToggleGroup(toggleGroup);
         prognosticRadioButton.setToggleGroup(toggleGroup);
 
-        pieChartTab.setOnSelectionChanged((event) -> {
-            if (pieChartTab.isSelected()) {
-                handleShowPieChart();
-            }
-        });
-
-
-        toggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+         toggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
                 clearChart();
             } else if (newValue == monthRadioButton) {
@@ -228,17 +223,37 @@ public class HelloController {
     }
 
     @FXML
-    private void handleShowPieChart(){
+    private void handlePieChart() {
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+                clearChart();
 
-        PieChart pieChart = new PieChart(pieChartData);
-        pieChart.setClockwise(true);
-        pieChart.setLabelLineLength(50);
-        pieChart.setLabelsVisible(true);
-        pieChart.setStartAngle(180);
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/covid", "root", "Q8iqQ74q@10");
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT MONTH(t.test_date) AS month, COUNT(*) AS positive_tests " +
+                    "FROM caseresolution c " +
+                    "INNER JOIN test t ON c.Patient_id = t.patient_id " +
+                    "WHERE YEAR(t.test_date) = 2022 AND t.test_result = 'positive' " +
+                    "GROUP BY MONTH(t.test_date) ORDER BY month ASC");  // Order by month in ascending order
 
-        AnchorPane anchorPane = (AnchorPane) pieChartTab.getContent();
-        anchorPane.getChildren().add(pieChart);
+
+            while (resultSet.next()) {
+                String month = resultSet.getString("month");
+                int positiveTests = resultSet.getInt("positive_tests");
+
+                pieChartData.add(new PieChart.Data(month, positiveTests));
+            }
+
+            pieChart.setData(pieChartData);
+
+            connection.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+
     }
+
 }
+
 
