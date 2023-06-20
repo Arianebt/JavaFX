@@ -14,7 +14,7 @@
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                             <children>
-                                <BarChart fx:id="chart" style="-fx-alternative-column-fill-visible: red; -fx-background-color: lightblue;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <BarChart fx:id="chart" animated="false" style="-fx-background-color: lightblue;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <xAxis>
                                         <CategoryAxis side="BOTTOM" fx:id="xAxis" />
                                     </xAxis>
@@ -47,6 +47,9 @@
                                         <RowConstraints minHeight="10.0" prefHeight="30.0" />
                                         <RowConstraints />
                                     </rowConstraints>
+                           <effect>
+                              <ColorAdjust />
+                           </effect>
 
                                 </GridPane>
                             </children></AnchorPane>
@@ -54,7 +57,7 @@
                 </Tab>
                 <Tab text="Data">
                     <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: lightblue;">
                             <children>
                                 <TableView fx:id="covidTable" layoutX="14.0" layoutY="40.0" prefHeight="516.0" prefWidth="567.0">
                                     <columns>
@@ -71,7 +74,7 @@
                 </Tab>
                 <Tab fx:id="pieChartTab" onSelectionChanged="#handlePieChart" text="Pie Chart">
                     <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: lightblue;">
                      <children>
                         <PieChart fx:id="pieChart" clockwise="true" labelLineLength="50" labelsVisible="true" startAngle="180.0" title="Positive Cases per Month" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
                            <effect>

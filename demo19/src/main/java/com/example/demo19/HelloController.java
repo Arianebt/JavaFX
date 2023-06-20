@@ -44,7 +44,6 @@ public class HelloController {
     private PieChart pieChart;
     @FXML
     private ObservableList<XYChart.Data<String, Integer>> chartData = FXCollections.observableArrayList();
-    private Node piechart;
 
 
     @FXML
