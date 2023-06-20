@@ -1,15 +1,13 @@
 package com.example.demo19;
-import java.sql.*;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.chart.*;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -30,11 +28,33 @@ public class HelloController {
     @FXML
     private TableColumn<Patient, String> ResultColumn;
     @FXML
+    private RadioButton monthRadioButton;
+    @FXML
+    private RadioButton sexRadioButton;
+    @FXML
+    private RadioButton prognosticRadioButton;
+    @FXML
     private BarChart<String, Integer> chart;
     @FXML
     private CategoryAxis xAxis;
     @FXML
     private NumberAxis yAxis;
+    @FXML
+    private Tab pieChartTab;
+    @FXML
+    private ObservableList<XYChart.Data<String, Integer>> chartData = FXCollections.observableArrayList();
+
+
+    @FXML
+    private void handleRadioButtonAction(ActionEvent event) {
+        if (event.getSource() == monthRadioButton && monthRadioButton.isSelected()) {
+            updateChartByMonth();
+        } else if (event.getSource() == sexRadioButton && sexRadioButton.isSelected()) {
+            updateChartBySex();
+        } else if (event.getSource() == prognosticRadioButton && prognosticRadioButton.isSelected()) {
+            updateChartByPrognostic();
+        }
+    }
 
     @FXML
     protected void initialize() {
@@ -43,10 +63,32 @@ public class HelloController {
         SexColumn.setCellValueFactory(new PropertyValueFactory<>("Sex"));
         BirthColumn.setCellValueFactory(new PropertyValueFactory<>("dateOfBirth"));
         ResultColumn.setCellValueFactory(new PropertyValueFactory<>("columnResult"));
-        xAxis.setLabel("Month");
-        yAxis.setLabel("Positive Tests");
 
-        retrieveChartData();
+        ToggleGroup toggleGroup = new ToggleGroup();
+        monthRadioButton.setToggleGroup(toggleGroup);
+        sexRadioButton.setToggleGroup(toggleGroup);
+        prognosticRadioButton.setToggleGroup(toggleGroup);
+
+        pieChartTab.setOnSelectionChanged((event) -> {
+            if (pieChartTab.isSelected()) {
+                handleShowPieChart();
+            }
+        });
+
+
+        toggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                clearChart();
+            } else if (newValue == monthRadioButton) {
+                updateChartByMonth();
+            } else if (newValue == sexRadioButton) {
+                updateChartBySex();
+            } else if (newValue == prognosticRadioButton) {
+                updateChartByPrognostic();
+            }
+        });
+
+        yAxis.setLabel("Positive Tests");
     }
 
     @FXML
@@ -78,8 +120,9 @@ public class HelloController {
         }
     }
 
-    private void retrieveChartData() {
-        ObservableList<XYChart.Data<String, Integer>> chartData = FXCollections.observableArrayList();
+    private void updateChartByMonth() {
+        clearChart();
+
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/covid", "root", "Q8iqQ74q@10");
             Statement statement = connection.createStatement();
@@ -100,8 +143,102 @@ public class HelloController {
             System.out.println(e);
         }
 
+        // Sort the chart data based on the month in ascending order
+        chartData.sort((data1, data2) -> {
+            int month1 = Integer.parseInt(data1.getXValue());
+            int month2 = Integer.parseInt(data2.getXValue());
+            return Integer.compare(month1, month2);
+        });
+
         XYChart.Series<String, Integer> series = new XYChart.Series<>();
         series.setData(chartData);
         chart.getData().add(series);
+        xAxis.setLabel("Month");
+    }
+
+    private void updateChartBySex() {
+        clearChart();
+
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/covid", "root", "Q8iqQ74q@10");
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT Sex, COUNT(*) AS positive_tests " +
+                    "FROM patient p " +
+                    "INNER JOIN test t ON p.idPatient = t.patient_id " +
+                    "WHERE YEAR(t.test_date) = 2022 AND t.test_result = 'positive' " +
+                    "GROUP BY Sex");
+
+            while (resultSet.next()) {
+                String sex = resultSet.getString("Sex");
+                int positiveTests = resultSet.getInt("positive_tests");
+
+                chartData.add(new XYChart.Data<>(sex, positiveTests));
+            }
+
+            connection.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        XYChart.Series<String, Integer> series = new XYChart.Series<>();
+        series.setData(chartData);
+        chart.getData().add(series);
+        xAxis.setLabel("Sex");
+    }
+
+    private void updateChartByPrognostic() {
+        clearChart();
+
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/covid", "root", "Q8iqQ74q@10");
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT prognostic, COUNT(*) AS positive_tests " +
+                    "FROM caseresolution  c " +
+                    "INNER JOIN test t ON c.Patient_id = t.patient_id " +
+                    "WHERE YEAR(t.test_date) = 2022 AND t.test_result = 'positive' " +
+                    "GROUP BY prognostic");
+
+            while (resultSet.next()) {
+                String prognostic = resultSet.getString("prognostic");
+                int positiveTests = resultSet.getInt("positive_tests");
+
+                chartData.add(new XYChart.Data<>(prognostic, positiveTests));
+            }
+
+            connection.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        XYChart.Series<String, Integer> series = new XYChart.Series<>();
+        series.setData(chartData);
+        chart.getData().add(series);
+        xAxis.setLabel("Prognostic");
+    }
+
+    @FXML
+    protected void handleClearButtonAction(ActionEvent event) {
+        covidTable.getItems().clear();
+        clearChart();
+    }
+
+    private void clearChart() {
+        chart.getData().clear();
+        chartData.clear();
+    }
+
+    @FXML
+    private void handleShowPieChart(){
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+
+        PieChart pieChart = new PieChart(pieChartData);
+        pieChart.setClockwise(true);
+        pieChart.setLabelLineLength(50);
+        pieChart.setLabelsVisible(true);
+        pieChart.setStartAngle(180);
+
+        AnchorPane anchorPane = (AnchorPane) pieChartTab.getContent();
+        anchorPane.getChildren().add(pieChart);
     }
 }
+

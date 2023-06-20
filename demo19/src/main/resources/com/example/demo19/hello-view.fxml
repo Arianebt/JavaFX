@@ -1,37 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.chart.BarChart?>
-<?import javafx.scene.chart.XYChart?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo19.HelloController">
-    <top>
-        <Button mnemonicParsing="false" onAction="#onHelloButtonClick" text="Load Data" />
-    </top>
-    <center>
-        <TableView fx:id="covidTable" prefHeight="200.0" prefWidth="200.0">
-            <columns>
-                <TableColumn fx:id="IdPatientColumn" prefWidth="75.0" text="Patient ID" />
-                <TableColumn fx:id="NameColumn" prefWidth="100.0" text="Name" />
-                <TableColumn fx:id="SexColumn" prefWidth="75.0" text="Sex" />
-                <TableColumn fx:id="BirthColumn" prefWidth="75.0" text="Date of Birth" />
-                <TableColumn fx:id="ResultColumn" prefWidth="75.0" text="Result" />
-            </columns>
-        </TableView>
-    </center>
-    <bottom>
-        <BarChart fx:id="chart" animated="false">
-            <xAxis>
-                <CategoryAxis fx:id="xAxis" side="BOTTOM" />
-            </xAxis>
-            <yAxis>
-                <NumberAxis fx:id="yAxis" side="LEFT" />
-            </yAxis>
-        </BarChart>
-    </bottom>
-</BorderPane>
+<AnchorPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo19.HelloController">
+    <children>
+        <TabPane prefHeight="600.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <tabs>
+                <Tab text="Bar Chart ">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <BarChart fx:id="chart" animated="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <xAxis>
+                                        <CategoryAxis side="BOTTOM" fx:id="xAxis" />
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis fx:id="yAxis" side="LEFT" />
+                                    </yAxis>
+                                    <padding>
+                                        <Insets top="200.0" />
+                                    </padding>
+                                </BarChart>
+
+                                <GridPane layoutX="14.0" layoutY="14.0" prefHeight="90.0" prefWidth="369.0" AnchorPane.bottomAnchor="467.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="217.0" AnchorPane.topAnchor="14.0">
+                                    <RadioButton fx:id="monthRadioButton" onAction="#handleRadioButtonAction" text="By Month" />
+                                    <RadioButton fx:id="sexRadioButton" onAction="#handleRadioButtonAction" text="By Sex" GridPane.columnIndex="1" />
+                                    <RadioButton fx:id="prognosticRadioButton" onAction="#handleRadioButtonAction" text="By Prognostic" GridPane.columnIndex="2" />
+                                    <Button onAction="#handleClearButtonAction" text="Clear" GridPane.rowIndex="3" />
+                                    <columnConstraints>
+                                        <ColumnConstraints maxWidth="95.0" minWidth="71.0" prefWidth="95.0" />
+                                        <ColumnConstraints maxWidth="107.0" minWidth="5.0" prefWidth="86.0" />
+                                        <ColumnConstraints maxWidth="133.0" minWidth="10.0" prefWidth="108.0" />
+                                        <ColumnConstraints maxWidth="129.0" minWidth="10.0" prefWidth="16.0" />
+                                        <ColumnConstraints maxWidth="200.0" minWidth="10.0" prefWidth="71.0" />
+                                    </columnConstraints>
+                                    <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                                        <RowConstraints />
+                                    </rowConstraints>
+
+                                </GridPane>
+                            </children></AnchorPane>
+                    </content>
+                </Tab>
+                <Tab text="Data">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <TableView fx:id="covidTable" layoutX="14.0" layoutY="40.0" prefHeight="516.0" prefWidth="567.0">
+                                    <columns>
+                                        <TableColumn fx:id="IdPatientColumn" prefWidth="75.0" text="Patient ID" />
+                                        <TableColumn fx:id="NameColumn" prefWidth="100.0" text="Name" />
+                                        <TableColumn fx:id="SexColumn" prefWidth="75.0" text="Sex" />
+                                        <TableColumn fx:id="BirthColumn" prefWidth="75.0" text="Date of Birth" />
+                                        <TableColumn fx:id="ResultColumn" prefWidth="75.0" text="Result" />
+                                    </columns>
+                                </TableView>
+                                <Button layoutX="13.0" layoutY="12.0" mnemonicParsing="false" onAction="#onHelloButtonClick" text="Load Data" />
+                            </children></AnchorPane>
+                    </content>
+                </Tab>
+                <Tab fx:id="pieChartTab" text="Pie Chart">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <PieChart title="Positive Cases per Month" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
+                           <padding>
+                              <Insets top="100.0" />
+                           </padding>
+                        </PieChart>
+                     </children></AnchorPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </children>
+</AnchorPane>
